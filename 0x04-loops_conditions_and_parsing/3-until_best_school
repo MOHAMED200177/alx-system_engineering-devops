@@ -2,9 +2,8 @@
 # This script is displaying "Best School" 10 times
 
 counter=10
-
 until [ $counter -eq 0 ]
-	do
-		((counter--))
-		echo "Best School"
-	done
+do
+	((counter--))
+	echo "Best School"
+done
