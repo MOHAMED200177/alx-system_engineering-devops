@@ -1,7 +1,2 @@
 #!/usr/bin/env ruby
-argument = ARGV[0]
-sender = argument.match(/\[from:([^\]]+)\]/)&.captures&.first
-receiver = argument.match(/\[to:([^\]]+)\]/)&.captures&.first
-flags = argument.match(/\[flags:([^\]]+)\]/)&.captures&.first
-
-puts "#{sender},#{receiver},#{flags}"
+puts ARGV[0].scan(/(?<=from|to|flags):(\+?\w+|[-?[0-1]:?]+)/).join(',')
