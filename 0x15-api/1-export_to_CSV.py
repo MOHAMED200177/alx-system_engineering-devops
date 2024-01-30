@@ -1,35 +1,36 @@
 #!/usr/bin/python3
+"""gather data from API save to csv"""
 
-"""
-Python script that exports data in the CSV format
-"""
-
-from requests import get
-from sys import argv
 import csv
+import requests
+from sys import argv
 
 if __name__ == "__main__":
-    response = get('https://jsonplaceholder.typicode.com/todos/')
-    data = response.json()
+    try:
+        user_ID = int(argv[1])
+    except Exception as a:
+        exit()
 
-    row = []
-    response2 = get('https://jsonplaceholder.typicode.com/users')
-    data2 = response2.json()
+    URL = 'https://jsonplaceholder.typicode.com'
+    # get employee name
+    employee_data = requests.get(f'{URL}/users/{user_ID}').json()
+    if employee_data == {}:
+        exit()
+    username = employee_data.get('username')
 
-    for i in data2:
-        if i['id'] == int(argv[1]):
-            employee = i['username']
+    # get all Tasks for all employees
+    tasks_list = requests.get(f'{URL}/todos').json()
 
-    with open(argv[1] + '.csv', 'w', newline='') as file:
-        writ = csv.writer(file, quoting=csv.QUOTE_ALL)
+    employee_tasks_list = []
+    for task in tasks_list:
+        if task.get('userId') == user_ID:
+            employee_tasks_list.append(task)
 
-        for i in data:
-
-            row = []
-            if i['userId'] == int(argv[1]):
-                row.append(i['userId'])
-                row.append(employee)
-                row.append(i['completed'])
-                row.append(i['title'])
-
-                writ.writerow(row)
+    with open(f'{user_ID}.csv', 'w', newline='') as file:
+        writer = csv.writer(file, quoting=csv.QUOTE_NONNUMERIC)
+        # "USER_ID","USERNAME","TASK_COMPLETED_STATUS","TASK_TITLE"
+        for task in employee_tasks_list:
+            writer.writerow([f"{user_ID}",
+                             f"{username}",
+                             f"{task.get('completed')}",
+                             f"{task.get('title')}"])
