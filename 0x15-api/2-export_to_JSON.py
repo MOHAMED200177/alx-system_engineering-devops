@@ -1,37 +1,41 @@
 #!/usr/bin/python3
-"""gather data from API save to csv"""
 
-import json
-import requests
+"""
+Python script that exports data in the JSON format.
+"""
+
+from requests import get
 from sys import argv
-
+import json
 
 if __name__ == "__main__":
-    try:
-        user_ID = int(argv[1])
-    except Exception as a:
-        exit()
+    response = get('https://jsonplaceholder.typicode.com/todos/')
+    data = response.json()
 
-    URL = 'https://jsonplaceholder.typicode.com'
-    # get employee name
-    employee_data = requests.get(f'{URL}/users/{user_ID}').json()
-    if employee_data == {}:
-        exit()
-    username = employee_data.get('username')
+    row = []
+    response2 = get('https://jsonplaceholder.typicode.com/users')
+    data2 = response2.json()
 
-    # get all Tasks for all employees
-    tasks_list = requests.get(f'{URL}/todos').json()
+    for i in data2:
+        if i['id'] == int(argv[1]):
+            u_name = i['username']
+            id_no = i['id']
 
-    employee_tasks_list = []
-    user_task_dict = {}
+    row = []
 
-    for task in tasks_list:
-        if task.get('userId') == user_ID:
-            employee_tasks_list.append({
-                "task": task.get('title'),
-                "completed": task.get('completed'),
-                "username": username,
-            })
-    user_task_dict[f"{user_ID}"] = employee_tasks_list
-    with open(f"{user_ID}.json", "w") as outfile:
-        json.dump(user_task_dict, outfile)
+    for i in data:
+
+        new_dict = {}
+
+        if i['userId'] == int(argv[1]):
+            new_dict['username'] = u_name
+            new_dict['task'] = i['title']
+            new_dict['completed'] = i['completed']
+            row.append(new_dict)
+
+    final_dict = {}
+    final_dict[id_no] = row
+    json_obj = json.dumps(final_dict)
+
+    with open(argv[1] + ".json",  "w") as f:
+        f.write(json_obj)

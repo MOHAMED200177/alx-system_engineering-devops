@@ -1,30 +1,39 @@
 #!/usr/bin/python3
-"""gather data from API save to json"""
 
+"""
+Python script that exports data in the JSON format.
+"""
+
+from requests import get
 import json
-import requests
-
 
 if __name__ == "__main__":
+    response = get('https://jsonplaceholder.typicode.com/todos/')
+    data = response.json()
 
-    URL = 'https://jsonplaceholder.typicode.com'
-    # get all users
-    users_list = requests.get(f'{URL}/users').json()
-    # get all Tasks for all employees
-    tasks_list = requests.get(f'{URL}/todos').json()
-    todo_all_employees = {}
-    for user in users_list:
-        user_id = user.get('id')
-        employee_tasks_list = []
-        for task in tasks_list:
-            if task.get('userId') == user_id:
-                employee_tasks_list.append({
-                    "username": user.get('username'),
-                    "task": task.get('title'),
-                    "completed": task.get('completed')
-                })
+    row = []
+    response2 = get('https://jsonplaceholder.typicode.com/users')
+    data2 = response2.json()
 
-        todo_all_employees[user_id] = employee_tasks_list
+    new_dict1 = {}
 
-    with open("todo_all_employees.json", "w") as outfile:
-        json.dump(todo_all_employees, outfile)
+    for j in data2:
+
+        row = []
+        for i in data:
+
+            new_dict2 = {}
+
+            if j['id'] == i['userId']:
+
+                new_dict2['username'] = j['username']
+                new_dict2['task'] = i['title']
+                new_dict2['completed'] = i['completed']
+                row.append(new_dict2)
+
+        new_dict1[j['id']] = row
+
+    with open("todo_all_employees.json",  "w") as f:
+
+        json_obj = json.dumps(new_dict1)
+        f.write(json_obj)
