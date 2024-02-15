@@ -1,17 +1,32 @@
-#!/usr/bin/python3
-"""Module for task 0"""
+import requests
 
 
 def number_of_subscribers(subreddit):
-    """Queries the Reddit API and returns the number of subscribers
-    to the subreddit"""
-    import requests
+    # Construct the URL for querying the subreddit's information
+    url = f"https://www.reddit.com/r/{subreddit}/about.json"
 
-    sub_info = requests.get("https://www.reddit.com/r/{}/about.json"
-                            .format(subreddit),
-                            headers={"User-Agent": "My-User-Agent"},
-                            allow_redirects=False)
-    if sub_info.status_code >= 300:
+    # Set a custom User-Agent to avoid errors related to Too Many Requests
+    headers = {'User-Agent': 'Custom User Agent'}
+
+    # Send a GET request to the Reddit API
+    response = requests.get(url, headers=headers, allow_redirects=False)
+
+    # Check if the request was successful (status code 200)
+    if response.status_code == 200:
+        # Extract the number of subscribers from the JSON response
+        data = response.json()
+        subscribers = data['data']['subscribers']
+        return subscribers
+    elif response.status_code == 302:
+        # If the subreddit is invalid and it redirects, return 0
+        return 0
+    else:
+        # Handle other error cases
+        print("Error:", response.status_code)
         return 0
 
-    return sub_info.json().get("data").get("subscribers")
+
+# Example usage:
+subreddit_name = "python"
+print(
+    f"The number of subscribers in r/{subreddit_name}: {number_of_subscribers(subreddit_name)}")
