@@ -9,7 +9,4 @@ if __name__ == '__main__':
     if len(sys.argv) < 2:
         print("Please pass an argument for the subreddit to search.")
     else:
-        try:
-            print("{:d}".format(number_of_subscribers(sys.argv[1])))
-        except Exception as e:
-            print("Error:", e)
+        print("{:d}".format(number_of_subscribers(sys.argv[1])))
