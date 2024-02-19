@@ -1,20 +1,19 @@
-#!/usr/bin/env bash
-# This script is displaying "Best School" 10 times
+#!/bin/bash
 
-counter=0
+# Initialize the loop counter
+count=1
 
-while [ $counter -lt 10 ]
-	do
-		(( counter++ ))
-		if [ $counter -eq 4 ]
-		then
-			echo "bad luck"
-		elif [ $counter -eq 8 ]
-		then
-			echo "good luck"
-		else
-			echo "Best School"
-		fi
-		
-		
-	done
+# Start the loop
+while [ $count -le 10 ]; do
+    # Check the current iteration number
+    if [ $count -eq 4 ]; then
+        echo "bad luck"
+    elif [ $count -eq 8 ]; then
+        echo "good luck"
+    else
+        echo "Best School"
+    fi
+    
+    # Increment the counter
+    count=$((count+1))
+done
